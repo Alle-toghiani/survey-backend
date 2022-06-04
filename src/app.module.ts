@@ -2,9 +2,23 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SurveysModule } from './surveys/surveys.module';
-
+import { TypeOrmModule} from '@nestjs/typeorm';
+import { join } from 'path';
+import { Survey } from './surveys/survey.entity';
 @Module({
-  imports: [SurveysModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      name: 'default',
+      type: 'mongodb',
+      database: 'survey',
+      useNewUrlParser: true,
+      autoLoadEntities: true,
+      useUnifiedTopology: true,
+      entities: [Survey],
+      synchronize: true,
+    }),
+    SurveysModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
