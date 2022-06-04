@@ -1,6 +1,6 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { SurveyService } from '../services/survey.service';
-
+import { CreateSurvey } from '../dtos/survey.dto';
 @Controller('survey')
 export class SurveyController {
 
@@ -21,5 +21,30 @@ constructor(private service: SurveyService){};
     
     return {...response[0].data , ...response[1].data};
 }
+@Get('/:id')
+    async getSurveyData(@Param('id') id: number){
+        return this.service.findSurvey(id);
+    }
 
+@Post('/create')
+addSurvey(@Body() survey: any ): Promise<any> {
+    return this.service.addSurvey(survey);
+}
+
+// get list of ids
+// @Post('/initialize/:id')
+//     initializeSurvey(@Param('id') id){
+
+//     }
+// }
+
+@Post('/initialize/:id')
+    initializeSurvey(@Param('id') id){
+        return this.service.initializeSurvey(id);
+    }
+
+@Post('/get-charts/:id')
+getCharts(@Param('id') id){
+    return this.service.getCharts(id);
+}
 }
