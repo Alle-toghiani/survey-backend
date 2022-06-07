@@ -7,22 +7,22 @@ import { Survey } from '../entities/survey.entity';
 
 @Injectable()
 export class SurveyService {
+    headers = {headers: {'Authorization': 'API-Key c0e852745ab0eea1727a21c98ebf093276a40253'}};
 
     constructor(
         @InjectRepository(Survey)private readonly surveyRepository: Repository<Survey>,
          private httpService: HttpService){}
 
     async fetchSurveyDatafromApi(surveyId: number): Promise<any>{
-        const questionReq = await firstValueFrom(this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId, {headers: {'Authorization': 'API-Key c0e852745ab0eea1727a21c98ebf093276a40253'}}))
-        const answerReq = await firstValueFrom(this.httpService.post('https://survey.porsline.ir/api/surveys/'+ surveyId + '/responses/', undefined ,{headers: {'Authorization': 'API-Key c0e852745ab0eea1727a21c98ebf093276a40253'}}))
+        const questionReq = await firstValueFrom(this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers))
+        const answerReq = await firstValueFrom(this.httpService.post('https://survey.porsline.ir/api/surveys/'+ surveyId + '/responses/', undefined , this.headers))
     
         return Promise.all([questionReq, answerReq]);
     }
 
     async getCharts(surveyId: number): Promise<any>{
         const req = await this.httpService.get(
-            'https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/',
-             {headers: {'Authorization': 'API-Key c0e852745ab0eea1727a21c98ebf093276a40253'}})
+            'https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers)
              return new Promise((resolve, reject)=>{
                 req.subscribe(data => {
                     resolve(data.data);
