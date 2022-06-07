@@ -21,22 +21,11 @@ constructor(private service: SurveyService){};
     
     return {...response[0].data , ...response[1].data};
 }
+
 @Get('/:id')
     async getSurveyData(@Param('id') id: number){
         return this.service.findSurvey(id);
     }
-
-@Post('/create')
-addSurvey(@Body() survey: any ): Promise<any> {
-    return this.service.addSurvey(survey);
-}
-
-// get list of ids
-// @Post('/initialize/:id')
-//     initializeSurvey(@Param('id') id){
-
-//     }
-// }
 
 @Post('/initialize/:id')
     initializeSurvey(@Param('id') id){
