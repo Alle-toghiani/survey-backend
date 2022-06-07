@@ -3,12 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, merge} from 'rxjs';
 import { Repository } from 'typeorm';
-import { Survey } from '../survey.entity';
-
-interface SurveyType{
-    title: string,
-    _id: number,
-}
+import { Survey } from '../entities/survey.entity';
 
 @Injectable()
 export class SurveyService {

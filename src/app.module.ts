@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { SurveysModule } from './surveys/surveys.module';
 import { TypeOrmModule} from '@nestjs/typeorm';
 import { join } from 'path';
-import { Survey } from './surveys/survey.entity';
+import { Survey } from './surveys/entities/survey.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
