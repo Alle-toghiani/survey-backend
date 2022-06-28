@@ -6,6 +6,9 @@ export class Survey{
     _id: ObjectID;
 
     @Column()
+    id: number;
+
+    @Column()
     data: {[key:string|number] : SurveyQuestion};
 
     @Column()
