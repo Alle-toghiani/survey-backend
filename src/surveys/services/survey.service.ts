@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable , HttpStatus} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, merge} from 'rxjs';
 import { Repository } from 'typeorm';
@@ -34,30 +34,65 @@ export class SurveyService {
              })
     }
 
-    async getSurveyData(surveyId: number): Promise<any>{
-        const existsInDb = await this.findSurvey(surveyId);
+    async getSurveyFromDb(surveyId: number): Promise<any>{
+        const existsInDb = await this.findSurveyInDb(surveyId);
     }
 
-    async addSurvey(newSurvey: SurveyType): Promise<any>{
+    async addSurveyToDb(newSurvey: Survey): Promise<any>{
         return this.surveyRepository.save(newSurvey);
     }
 
     async initializeSurvey(surveyId: number){
-        const doesSurveyExist = await this.findSurvey(surveyId);
+        const doesSurveyExist = await this.findSurveyInDb(surveyId);
         return new Promise((resolve, reject) => {
-        if (doesSurveyExist.length > 0){
+        if (doesSurveyExist.id){
             resolve({message: 'پرسشنامه ای با آیدی وارد شده وجود دارد', id: surveyId})
         } else {
-            this.getCharts(surveyId).then( data => {
-                this.addSurvey({_id: surveyId, ...data});
-                resolve("Done")
-            }
-            )}
+            let surveyObject = {} as Survey;
+            this.getSurveyInfo(surveyId).then(
+                (res) => {
+                    surveyObject = res;
+                    return this.getCharts(surveyId)
+                }
+            ).then( (chartData) => {
+                surveyObject.data = chartData;
+                return this.addSurveyToDb(surveyObject);
+            }).then(
+                (res) => {
+                    resolve({
+                        success: true,
+                        id: surveyId,
+                        message: "اطلاعات پرسشنامه با موفقیت دریافت شد"
+                    });
+                }
+            ).catch((data) => {
+                reject(
+                    {
+                    success: false,
+                    id: surveyId,
+                    message: "خواندن اطلاعات پرسشنامه با خطا مواجه شد",
+                    status: data.status
+                })
+            })
+        }
         })
     }
 
-    async findSurvey(surveyId: number): Promise<any[]>{
-        const req = await this.surveyRepository.find({_id: surveyId});
+    async getSurveyInfo(surveyId: number): Promise<Survey>{
+        const request = await this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers)
+        return new Promise((resolve, reject)=>{
+            request.subscribe(data => {
+                resolve(data.data);
+            }, erorr => {
+                reject({
+                    message: "Getting Survey info failed",
+                })
+            })
+         })
+    }
+
+    async findSurveyInDb(surveyId: number): Promise<Survey>{
+        const req = await this.surveyRepository.findOne({id: +surveyId});
         return req;
     }
 }
