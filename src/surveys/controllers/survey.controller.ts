@@ -24,7 +24,7 @@ constructor(private service: SurveyService){};
 
 @Get('/:id')
     async getSurveyData(@Param('id') id: number){
-        return this.service.findSurvey(id);
+        return this.service.findSurveyInDb(id);
     }
 
 @Post('/initialize/:id')
