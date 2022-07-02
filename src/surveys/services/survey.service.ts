@@ -22,7 +22,9 @@ export class SurveyService {
 
     getCharts(surveyId: number): Observable<any>{
         //TODO: move to httpService
-        return this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers);
+        return this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers).pipe(
+            map(item => item.data)
+            );
     }
 
 
