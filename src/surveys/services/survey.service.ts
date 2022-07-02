@@ -27,6 +27,11 @@ export class SurveyService {
             );
     }
 
+    getSurveyInfo(surveyId: number): Observable<any>{
+        return this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers).pipe(
+            map(item => item.data)
+            );  
+    }
 
     async initializeSurvey(surveyId: number){
         const doesSurveyExist = await this.findSurveyInDb(surveyId);
