@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable , HttpStatus} from '@nestjs/common';
+import { Injectable , HttpStatus, HttpException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { firstValueFrom, merge, Observable, from} from 'rxjs';
+import { AxiosResponse } from 'axios';
+import { firstValueFrom, merge, Observable, from, zip, map, tap, switchMap, catchError} from 'rxjs';
 import { Repository } from 'typeorm';
 import { Survey } from '../entities/survey.entity';
 
@@ -35,42 +36,20 @@ export class SurveyService {
 
     async initializeSurvey(surveyId: number){
         const doesSurveyExist = await this.findSurveyInDb(surveyId);
-        return new Promise((resolve, reject) => {
-        if (doesSurveyExist.id){
-            resolve({message: 'پرسشنامه ای با آیدی وارد شده وجود دارد', id: surveyId})
+        if (doesSurveyExist){
+            throw new HttpException('SURVEY_INITIALIZATION.SURVEY_ALREADY_INITIALIZED', HttpStatus.FORBIDDEN);
         } else {
-            let surveyObject = {} as Survey;
-            this.getSurveyInfo(surveyId).then(
-                (res) => {
-                    surveyObject = res;
-                    return this.getCharts(surveyId)
-                }
-            ).then( (chartData) => {
-                surveyObject.data = chartData;
-                return this.addSurveyToDb(surveyObject);
-            }).then(
-                (res) => {
-                    resolve({
-                        success: true,
-                        id: surveyId,
-                        message: "اطلاعات پرسشنامه با موفقیت دریافت شد"
-                    });
-                }
-            ).catch((data) => {
-                reject(
-                    {
-                    success: false,
-                    id: surveyId,
-                    message: "خواندن اطلاعات پرسشنامه با خطا مواجه شد",
-                    status: data.status
-                })
-            })
+            return zip(
+                this.getSurveyInfo(surveyId),
+                this.getCharts(surveyId)).pipe(
+                    map(data => ({...data[0], ...data[1]})),
+                    catchError(error => {
+                        throw new Error('SURVEY_INITIALIZATION.CANT_FETCH_SURVEY_INFO')
+                    }), 
+                    switchMap(mergedData => from(this.addSurveyToDb(mergedData)))
+                )
         }
-        })
-    getSurveyInfo(surveyId: number): Observable<any>{
-        return this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers);  
     }
-
 
     async findSurveyInDb(surveyId: number): Promise<Survey>{
         return await this.surveyRepository.findOne({id: +surveyId});
