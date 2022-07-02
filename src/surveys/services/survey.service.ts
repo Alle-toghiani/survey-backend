@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable , HttpStatus} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { firstValueFrom, merge} from 'rxjs';
+import { firstValueFrom, merge, Observable, from} from 'rxjs';
 import { Repository } from 'typeorm';
 import { Survey } from '../entities/survey.entity';
 
@@ -20,18 +20,9 @@ export class SurveyService {
         return Promise.all([questionReq, answerReq]);
     }
 
-    async getCharts(surveyId: number): Promise<any>{
-        const req = await this.httpService.get(
-            'https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers)
-             return new Promise((resolve, reject)=>{
-                req.subscribe(data => {
-                    resolve(data.data);
-                }, erorr => {
-                    reject({
-                        message: "Getting Survey chart data failed",
-                    })
-                })
-             })
+    getCharts(surveyId: number): Observable<any>{
+        //TODO: move to httpService
+        return this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers);
     }
 
     async getSurveyFromDb(surveyId: number): Promise<any>{
