@@ -25,13 +25,6 @@ export class SurveyService {
         return this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers);
     }
 
-    async getSurveyFromDb(surveyId: number): Promise<any>{
-        const existsInDb = await this.findSurveyInDb(surveyId);
-    }
-
-    async addSurveyToDb(newSurvey: Survey): Promise<any>{
-        return this.surveyRepository.save(newSurvey);
-    }
 
     async initializeSurvey(surveyId: number){
         const doesSurveyExist = await this.findSurveyInDb(surveyId);
@@ -84,5 +77,13 @@ export class SurveyService {
 
     async findSurveyInDb(surveyId: number): Promise<Survey>{
         return await this.surveyRepository.findOne({id: +surveyId});
+    }
+
+    async getSurveyFromDb(surveyId: number): Promise<any>{
+        const existsInDb = await this.findSurveyInDb(surveyId);
+    }
+
+    async addSurveyToDb(newSurvey: Survey): Promise<any>{
+        return this.surveyRepository.save(newSurvey);
     }
 }
