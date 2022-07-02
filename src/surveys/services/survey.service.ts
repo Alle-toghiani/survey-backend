@@ -60,20 +60,10 @@ export class SurveyService {
             })
         }
         })
+    getSurveyInfo(surveyId: number): Observable<any>{
+        return this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers);  
     }
 
-    async getSurveyInfo(surveyId: number): Promise<Survey>{
-        const request = await this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers)
-        return new Promise((resolve, reject)=>{
-            request.subscribe(data => {
-                resolve(data.data);
-            }, erorr => {
-                reject({
-                    message: "Getting Survey info failed",
-                })
-            })
-         })
-    }
 
     async findSurveyInDb(surveyId: number): Promise<Survey>{
         return await this.surveyRepository.findOne({id: +surveyId});
