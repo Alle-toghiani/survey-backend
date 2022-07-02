@@ -83,7 +83,6 @@ export class SurveyService {
     }
 
     async findSurveyInDb(surveyId: number): Promise<Survey>{
-        const req = await this.surveyRepository.findOne({id: +surveyId});
-        return req;
+        return await this.surveyRepository.findOne({id: +surveyId});
     }
 }
