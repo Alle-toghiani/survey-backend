@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable , HttpStatus, HttpException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AxiosResponse } from 'axios';
-import { firstValueFrom, merge, Observable, from, zip, map, tap, switchMap, catchError} from 'rxjs';
+import { firstValueFrom, Observable, from, zip, map, tap, switchMap, catchError} from 'rxjs';
 import { Repository } from 'typeorm';
+import { SurveyQuestion } from '../entities/survey-question.entity';
 import { Survey } from '../entities/survey.entity';
 
 @Injectable()
@@ -52,7 +52,11 @@ export class SurveyService {
     }
 
     async findSurveyInDb(surveyId: number): Promise<Survey>{
-        return await this.surveyRepository.findOne({id: +surveyId});
+        const response = await this.surveyRepository.findOne({id: +surveyId});
+        if (!response) throw new HttpException('SURVEY.NOT_FOUND', HttpStatus.NOT_FOUND);
+        return response;
+    }
+
     }
 
     async getSurveyFromDb(surveyId: number): Promise<any>{
