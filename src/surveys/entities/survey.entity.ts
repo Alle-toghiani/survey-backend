@@ -9,7 +9,7 @@ export class Survey{
     id: number;
 
     @Column()
-    data: {[key:string|number] : SurveyQuestion};
+    data: SurveyQuestion[];
 
     @Column()
     name: string
