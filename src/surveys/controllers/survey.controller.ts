@@ -47,13 +47,13 @@ constructor(private service: SurveyService){};
         }
     }
 
-@Post('/initialize/:id')
-    initializeSurvey(@Param('id') id){
+@Post('/initialize/:sid')
+    initializeSurvey(@Param('sid') id){
         return this.service.initializeSurvey(id);
     }
 
-@Post('/get-charts/:id')
-getCharts(@Param('id') id){
+@Post('/get-charts/:sid')
+getCharts(@Param('sid') id){
     return this.service.getCharts(id);
 }
 }
