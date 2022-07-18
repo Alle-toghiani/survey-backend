@@ -57,6 +57,18 @@ export class SurveyService {
         return response;
     }
 
+    async findSurveyQuestion(surveyId: string, questionId: string): Promise<SurveyQuestion>{
+        //FIXME: get question object via query instead of getting the whole array and filtering it
+        const response = await this.surveyRepository.findOne({select: ["data"], where:{id: +surveyId}})
+        if (!response) throw new HttpException('SURVEY.NOT_FOUND', HttpStatus.NOT_FOUND);
+            if ( response.data.length > 0 ){
+                const question = response.data.find(item => item.id === +questionId);
+                if (question){
+                    return question;
+                } else {
+                    throw new HttpException('SURVEY.QUESTION.NOT_FOUND', HttpStatus.NOT_FOUND);
+                }
+            } else throw new HttpException('SURVEY.QUESTION.NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     async getSurveyFromDb(surveyId: number): Promise<any>{
