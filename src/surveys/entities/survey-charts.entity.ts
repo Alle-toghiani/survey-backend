@@ -16,3 +16,8 @@ export class SurveyCharts{
     @Column()
     caption: string;
 }
+
+export class CustomChartSettings{
+    @Column()
+    type: string;
+}
