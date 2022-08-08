@@ -77,6 +77,17 @@ export class SurveyService {
             } else throw new HttpException('SURVEY.QUESTION.NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
+    async updateSurveyConfig(surveyId: string, questionId: string, data: any): Promise<boolean>{
+        const survey = await this.findSurveyInDb(+surveyId);
+
+        const updatedSurvey = {
+            ...survey,
+            data: survey.data.map(question => question.id === +questionId ? {...question, customChartSettings: data} : question)
+        };
+        const saveRes = this.surveyRepository.save(updatedSurvey);
+        return !!saveRes;
+    }
+
     async getSurveyFromDb(surveyId: number): Promise<any>{
         const existsInDb = await this.findSurveyInDb(surveyId);
     }
