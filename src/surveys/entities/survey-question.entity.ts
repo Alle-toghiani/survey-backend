@@ -1,5 +1,5 @@
 import { Column } from "typeorm";
-import { SurveyCharts } from "./survey-charts.entity";
+import { SurveyCharts, CustomChartSettings } from "./survey-charts.entity";
 import { SurveyChoice } from "./survey-choices.entity";
 
 export class SurveyQuestion{
@@ -8,6 +8,9 @@ export class SurveyQuestion{
 
     @Column(type => SurveyCharts)
     charts: SurveyCharts;
+
+    @Column(type => CustomChartSettings)
+    customChartSettings?: CustomChartSettings
 
     @Column()
     id: number;
