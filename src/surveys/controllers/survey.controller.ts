@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { SurveyService } from '../services/survey.service';
 import { CreateSurvey } from '../dtos/survey.dto';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
@@ -35,6 +35,18 @@ constructor(private service: SurveyService){};
             return new ResponseError("SURVEY.QUESTION.GET.ERROR", error)
         }
     }
+
+@Put('/:sid/details/:qid')
+async updateChartConfig(@Param('sid') sid: string, @Param('qid') qid: string, @Body() data: any){
+    try{
+        var response =  await this.service.updateSurveyConfig(sid, qid, data);
+        return new ResponseSuccess("CHART-CONFIG.UPDATE.SUCCESS", response);
+        
+    }
+    catch(error) {
+        return new ResponseError("CHART-CONFIG.UPDATE.ERROR", error)
+    }
+}    
 
 @Get('/:sid')
     async getSurveyData(@Param('sid') sid: number){
