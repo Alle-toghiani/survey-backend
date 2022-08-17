@@ -1,10 +1,13 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable , HttpStatus, HttpException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { firstValueFrom, Observable, from, zip, map, tap, switchMap, catchError} from 'rxjs';
+
 import { Repository } from 'typeorm';
+import { firstValueFrom, Observable, from, zip, map, tap, switchMap, catchError} from 'rxjs';
+
 import { SurveyQuestion } from '../entities/survey-question.entity';
 import { Survey } from '../entities/survey.entity';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class SurveyService {
@@ -19,6 +22,11 @@ export class SurveyService {
         const answerReq = await firstValueFrom(this.http.post('https://survey.porsline.ir/api/surveys/'+ surveyId + '/responses/', undefined , this.headers))
     
         return Promise.all([questionReq, answerReq]);
+    }
+
+    async fetchFoldersNested(): Promise<any>{
+        const url = environment.baseApiUrl + 'folders/';
+        return await firstValueFrom(this.http.get(url, {params : {nested: true}, headers: this.headers.headers }).pipe(map(item => item.data)));
     }
 
     getCharts(surveyId: number): Observable<any>{
