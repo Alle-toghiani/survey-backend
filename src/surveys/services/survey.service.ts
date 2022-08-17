@@ -12,18 +12,18 @@ export class SurveyService {
 
     constructor(
         @InjectRepository(Survey)private readonly surveyRepository: Repository<Survey>,
-         private httpService: HttpService){}
+         private http: HttpService){}
 
     async fetchSurveyDatafromApi(surveyId: number): Promise<any>{
-        const questionReq = await firstValueFrom(this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers))
-        const answerReq = await firstValueFrom(this.httpService.post('https://survey.porsline.ir/api/surveys/'+ surveyId + '/responses/', undefined , this.headers))
+        const questionReq = await firstValueFrom(this.http.get('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers))
+        const answerReq = await firstValueFrom(this.http.post('https://survey.porsline.ir/api/surveys/'+ surveyId + '/responses/', undefined , this.headers))
     
         return Promise.all([questionReq, answerReq]);
     }
 
     getCharts(surveyId: number): Observable<any>{
-        //TODO: move to httpService
-        return this.httpService.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers).pipe(
+        //TODO: move to http
+        return this.http.get('https://survey.porsline.ir/api/surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers).pipe(
             map(chartRes => {
                 let tempItem = {...chartRes.data};
                 let dataArray = [];
@@ -35,7 +35,7 @@ export class SurveyService {
     }
 
     getSurveyInfo(surveyId: number): Observable<any>{
-        return this.httpService.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers).pipe(
+        return this.http.get<Survey>('https://survey.porsline.ir/api/surveys/'+ surveyId, this.headers).pipe(
             map(item => item.data)
             );  
     }
