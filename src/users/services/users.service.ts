@@ -19,7 +19,12 @@ export class UsersService {
     return this.repo.findOne(id);
   }
 
-  find(email: string) {
+  // FIXME: use one find method with optional email parameter
+  find(username: string) {
+    return this.repo.find({ username });
+  }
+
+  findEmail(email: string) {
     return this.repo.find({ email });
   }
 
