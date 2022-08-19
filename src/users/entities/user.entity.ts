@@ -8,6 +8,9 @@ import {
   export class User {
     @ObjectIdColumn()
     id: number;
+
+    @Column()
+    username: string;
   
     @Column()
     email: string;
