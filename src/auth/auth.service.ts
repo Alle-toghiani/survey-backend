@@ -20,13 +20,18 @@ import { UsersService } from 'src/users/services/users.service';
         private jwtService: JwtService
         ) {}
   
-    async signup(email: string, password: string) {
+    async signup(username: string, email: string, password: string) {
       // See if email is in usea
-      const users = await this.usersService.find(email);
+      const users = await this.usersService.find(username);
+      if (users.length) {
+        throw new BadRequestException('username in use');
+      }
+      
+      const usersCheckEmail = await this.usersService.findEmail(email);
       if (users.length) {
         throw new BadRequestException('email in use');
       }
-  
+
       // Hash the users password
       // Generate a salt
       const salt = randomBytes(8).toString('hex');
@@ -38,7 +43,7 @@ import { UsersService } from 'src/users/services/users.service';
       const result = salt + '.' + hash.toString('hex');
   
       // Create a new user and save it
-      const user = await this.usersService.create(email, result);
+      const user = await this.usersService.create(username, email, result);
   
       // return the user
       return user;
