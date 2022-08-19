@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule} from '@nestjs/typeorm';
+
+import { join } from 'path';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { SurveysModule } from './surveys/surveys.module';
-import { TypeOrmModule} from '@nestjs/typeorm';
-import { join } from 'path';
 import { Survey } from './surveys/entities/survey.entity';
+
 import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -15,7 +21,7 @@ import { UsersModule } from './users/users.module';
       useNewUrlParser: true,
       autoLoadEntities: true,
       useUnifiedTopology: true,
-      entities: [Survey],
+      entities: [Survey, User],
       synchronize: true,
     }),
     SurveysModule,
