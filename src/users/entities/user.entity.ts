@@ -1,12 +1,12 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
+    ObjectIdColumn,
   } from 'typeorm';
   
   @Entity()
   export class User {
-    @PrimaryGeneratedColumn()
+    @ObjectIdColumn()
     id: number;
   
     @Column()
@@ -18,7 +18,7 @@ import {
     @Column({default: null})
     apiToken: string;
 
-    @Column()
+    @Column({default: null})
     parentId: string;
 
     @Column({default: []})
