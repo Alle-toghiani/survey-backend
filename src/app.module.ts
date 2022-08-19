@@ -5,6 +5,7 @@ import { SurveysModule } from './surveys/surveys.module';
 import { TypeOrmModule} from '@nestjs/typeorm';
 import { join } from 'path';
 import { Survey } from './surveys/entities/survey.entity';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,7 +18,8 @@ import { Survey } from './surveys/entities/survey.entity';
       entities: [Survey],
       synchronize: true,
     }),
-    SurveysModule
+    SurveysModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
