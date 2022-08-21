@@ -9,6 +9,7 @@ import {
   import { randomBytes, scrypt as _scrypt } from 'crypto';
 
 import { UsersService } from 'src/users/services/users.service';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
   
   const scrypt = promisify(_scrypt);
   
@@ -20,14 +21,14 @@ import { UsersService } from 'src/users/services/users.service';
         private jwtService: JwtService
         ) {}
   
-    async signup(username: string, email: string, password: string) {
+    async signup(data: CreateUserDto) {
       // See if email is in usea
-      const users = await this.usersService.find(username);
+      const users = await this.usersService.find(data.username);
       if (users.length) {
         throw new BadRequestException('username in use');
       }
       
-      const usersCheckEmail = await this.usersService.findEmail(email);
+      const usersCheckEmail = await this.usersService.findEmail(data.email);
       if (users.length) {
         throw new BadRequestException('email in use');
       }
@@ -37,13 +38,13 @@ import { UsersService } from 'src/users/services/users.service';
       const salt = randomBytes(8).toString('hex');
   
       // Hash the salt and the password together
-      const hash = (await scrypt(password, salt, 32)) as Buffer;
+      const hash = (await scrypt(data.password, salt, 32)) as Buffer;
   
       // Join the hashed result and the salt together
       const result = salt + '.' + hash.toString('hex');
   
       // Create a new user and save it
-      const user = await this.usersService.create(username, email, result);
+      const user = await this.usersService.create(data.username, data.email, result);
   
       // return the user
       return user;
