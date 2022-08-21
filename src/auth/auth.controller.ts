@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
-import { Public } from 'src/common/decorators/public-route.decorator';
 
+import { Public } from 'src/common/decorators/public-route.decorator';
+import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
 
@@ -14,15 +15,28 @@ export class AuthController {
     @Public()
     @Post('/signup')
     async createUser(@Body() body: CreateUserDto) {
-      const user = await this.authService.signup(body.username, body.email, body.password);
-      return user;
+
+      try{
+        const user = await this.authService.signup(body);
+        return new ResponseSuccess("AUTH.SIGNUP.SUCCESS");
+        
+      }
+      catch(error) {
+          return new ResponseError("AUTH.SIGNUP.ERROR", error)
+      }
     }
   
     @Public()
     @Post('/signin')
     async signin(@Body() body: CreateUserDto) {
-      const user = await this.authService.signin(body.username, body.password);
-      return user;
+      try{
+        const token = await this.authService.signin(body);
+        return new ResponseSuccess("AUTH.SIGNIN.SUCCESS", token);
+        
+      }
+      catch(error) {
+          return new ResponseError("AUTH.SIGNIN.ERROR", error)
+      }
     }
   
     @Delete('/:id')
