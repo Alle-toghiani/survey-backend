@@ -65,7 +65,7 @@ import { UsersService } from 'src/users/services/users.service';
 
       let payload = { 
         username: user.username,
-        role: user.parentId ? 'ADMIN' : 'MOD',
+        role: user.parentId ? 'MOD' : 'ADMIN',
         hasToken: !user.parentId && user.apiToken
         };
 
