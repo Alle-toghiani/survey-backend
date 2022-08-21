@@ -50,15 +50,20 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
       return user;
     }
   
-    async signin(email: string, password: string) {
-      const [user] = await this.usersService.find(email);
+    async signin(data: CreateUserDto) {
+      let [user] = await this.usersService.find(data.username);
       if (!user) {
-        throw new NotFoundException('user not found');
+        const [userEmail] = await this.usersService.findEmail(data.username);
+        if (!userEmail) {
+          throw new NotFoundException('user not found');
+        } else {
+          user = userEmail;
+        }
       }
   
       const [salt, storedHash] = user.password.split('.');
   
-      const hash = (await scrypt(password, salt, 32)) as Buffer;
+      const hash = (await scrypt(data.password, salt, 32)) as Buffer;
   
       if (storedHash !== hash.toString('hex')) {
         throw new BadRequestException('bad password');
