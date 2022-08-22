@@ -6,12 +6,12 @@ import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
 @Controller('survey')
 export class SurveyController {
 
-constructor(private service: SurveyService){};
+constructor(private surveyService: SurveyService){};
 
 @Get('/folders')
     async getFoldersNested() {
         try{
-            const response = await this.service.fetchFoldersNested();
+            const response = await this.surveyService.fetchFoldersNested();
             return new ResponseSuccess("FOLDERS.FETCH.SUCCESS", response);
         }
         catch(error) {
@@ -22,7 +22,7 @@ constructor(private service: SurveyService){};
 @Get('/:sid/details/:qid')
     async getSurveyQuestionDetails(@Param('sid') sid: string, @Param('qid') qid: string){
         try{
-            var response =  await this.service.findSurveyQuestion(sid, qid);
+            var response =  await this.surveyService.findSurveyQuestion(sid, qid);
             return new ResponseSuccess("SURVEY.QUESTION.GET.SUCCESS", response);
             
         }
@@ -34,7 +34,7 @@ constructor(private service: SurveyService){};
 @Put('/:sid/details/:qid')
 async updateChartConfig(@Param('sid') sid: string, @Param('qid') qid: string, @Body() data: any){
     try{
-        var response =  await this.service.updateSurveyConfig(sid, qid, data);
+        var response =  await this.surveyService.updateSurveyConfig(sid, qid, data);
         return new ResponseSuccess("CHART-CONFIG.UPDATE.SUCCESS", response);
         
     }
@@ -46,7 +46,7 @@ async updateChartConfig(@Param('sid') sid: string, @Param('qid') qid: string, @B
 @Get('/:sid')
     async getSurveyData(@Param('sid') sid: number){
         try{
-            var response =  await this.service.findSurveyInDb(sid);
+            var response =  await this.surveyService.findSurveyInDb(sid);
             return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
         }
         catch(error) {
@@ -56,11 +56,11 @@ async updateChartConfig(@Param('sid') sid: string, @Param('qid') qid: string, @B
 
 @Post('/initialize/:sid')
     initializeSurvey(@Param('sid') id){
-        return this.service.initializeSurvey(id);
+        return this.surveyService.initializeSurvey(id);
     }
 
 @Post('/get-charts/:sid')
 getCharts(@Param('sid') id){
-    return this.service.getCharts(id);
+    return this.surveyService.getCharts(id);
 }
 }
