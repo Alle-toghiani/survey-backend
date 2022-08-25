@@ -15,12 +15,12 @@ export class UsersService {
       return this.repo.save(user);
   }
   
-  findOne(id: number) {
-    return this.repo.findOne(id);
+  findOne(username: string) {
+    return this.repo.findOne({ username });
   }
 
   // FIXME: use one find method with optional email parameter
-  find(username: string) {
+  find(username: string){
     return this.repo.find({ username });
   }
 
@@ -28,8 +28,8 @@ export class UsersService {
     return this.repo.find({ email });
   }
 
-  async update(id: number, attrs: Partial<User>) {
-    const user = await this.findOne(id);
+  async update(username: string, attrs: Partial<User>) {
+    const user = await this.findOne(username);
     if (!user) {
       throw new NotFoundException('user not found');
     }
@@ -37,8 +37,8 @@ export class UsersService {
     return this.repo.save(user);
   }
 
-  async remove(id: number) {
-    const user = await this.findOne(id);
+  async remove(username: string) {
+    const user = await this.findOne(username);
     if (!user) {
       throw new NotFoundException('user not found');
     }
