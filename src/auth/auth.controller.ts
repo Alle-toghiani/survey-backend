@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Request } from '@nestjs/common';
 
 import { Public } from 'src/common/decorators/public-route.decorator';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
@@ -37,6 +37,17 @@ export class AuthController {
       catch(error) {
           return new ResponseError("AUTH.SIGNIN.ERROR", error)
       }
+    }
+
+    @Post('/api-token')
+    async modifyApiToken(@Request() req: any, @Body() body: {apiToken: string}) {
+        try{
+            const response = await this.authService.setApiToken(req.user.username, body.apiToken);
+            return new ResponseSuccess("API-TOKEN.SUBMIT.SUCCESS", response);
+        }
+        catch(error) {
+            return new ResponseError("API-TOKEN.SUBMIT.ERROR", error)
+        }
     }
   
     @Delete('/:id')
