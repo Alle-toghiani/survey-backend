@@ -85,5 +85,11 @@ import { User } from 'src/users/entities/user.entity';
         access_token: this.jwtService.sign(payload),
       };
     }
+    
+    async setApiToken(username: string, apiToken: string){
+      const updateUserApiTokenRes = await this.usersService.setApiToken(username, apiToken);
+      return this.getAccessToken(updateUserApiTokenRes);
+    }
+
   }
   
