@@ -10,6 +10,8 @@ import {
 
 import { UsersService } from 'src/users/services/users.service';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { AccessTokenModel } from './models/access-token.model';
+import { User } from 'src/users/entities/user.entity';
   
   const scrypt = promisify(_scrypt);
   
@@ -68,16 +70,20 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
       if (storedHash !== hash.toString('hex')) {
         throw new BadRequestException('bad password');
       }
+      
+      return this.getAccessToken(user);
+    }
 
-      let payload = { 
+    getAccessToken(user: User){
+      let payload: AccessTokenModel = { 
         username: user.username,
         role: user.parentId ? 'MOD' : 'ADMIN',
-        hasToken: !user.parentId && user.apiToken
+        hasToken: !!(!user.parentId && user.apiToken)
         };
 
       return {
-      access_token: this.jwtService.sign(payload),
-    };
+        access_token: this.jwtService.sign(payload),
+      };
     }
   }
   
