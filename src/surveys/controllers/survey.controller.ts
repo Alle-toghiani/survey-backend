@@ -2,12 +2,15 @@ import { Body, Controller, Get, HttpStatus, Param, Post, Put } from '@nestjs/com
 import { SurveyService } from '../services/survey.service';
 import { CreateSurvey } from '../dtos/survey.dto';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
+import { Public } from 'src/common/decorators/public-route.decorator';
+import { SurveysHttpService } from '../services/surveys-http.service';
 
 @Controller('survey')
 export class SurveyController {
 
     constructor(
-        private surveyService: SurveyService
+        private surveyService: SurveyService,
+        private surveyHttpService: SurveysHttpService
         ){};
 
     @Get('/folders')
@@ -64,5 +67,18 @@ export class SurveyController {
     @Post('/get-charts/:sid')
         getCharts(@Param('sid') id){
             return this.surveyService.getCharts(id);
-        }   
+        }
+
+    @Public()
+    @Get('/r/:reportId')
+        async getReports(@Param('reportId') reportId) {
+            try{
+                
+                const response = await this.surveyHttpService.getReportData(reportId);
+                return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
+            }
+            catch(error) {
+                return new ResponseError("SURVEY.GET.ERROR", error)
+            }
+        }
 }
