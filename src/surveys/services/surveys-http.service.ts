@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { map, Observable } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
 import { FolderModel } from '../models/folder.model';
 import { environment } from 'src/environments/environment';
 @Injectable()
@@ -26,4 +26,9 @@ export class SurveysHttpService {
           }
         )
       }
+
+  async getFolders(): Promise<any>{
+    const url = environment.baseApiUrl + 'folders/';
+    return await firstValueFrom(this.http.get(url, {params : {nested: true}}).pipe(map(item => item.data)));
+  }  
 }

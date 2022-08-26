@@ -16,7 +16,7 @@ export class SurveyController {
     @Get('/folders')
         async getFoldersNested() {
             try{
-                const response = await this.surveyService.fetchFoldersNested();
+                const response = await this.surveyHttpService.getFolders();
                 return new ResponseSuccess("FOLDERS.FETCH.SUCCESS", response);
             }
             catch(error) {
