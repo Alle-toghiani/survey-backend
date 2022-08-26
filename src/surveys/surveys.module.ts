@@ -1,13 +1,15 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { SurveyController } from './controllers/survey.controller';
-import { SurveyService } from './services/survey.service';
-import { HttpModule, HttpService } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule, HttpService } from '@nestjs/axios';
+
+import { SurveyController } from './controllers/survey.controller';
 import { Survey } from './entities/survey.entity';
+
+import { SurveyService } from './services/survey.service';
 import { SurveysHttpService } from './services/surveys-http.service';
+
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/services/users.service';
-import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 
 
 @Module({
@@ -40,7 +42,7 @@ export class SurveysModule implements OnModuleInit {
           }
         } else {
           // User is Mod
-          
+
         }
       }
       return config;
