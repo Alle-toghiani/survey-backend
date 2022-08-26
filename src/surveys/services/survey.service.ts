@@ -11,27 +11,25 @@ import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class SurveyService {
-    headers = {headers: {'Authorization': 'API-Key c0e852745ab0eea1727a21c98ebf093276a40253'}};
-
     constructor(
         @InjectRepository(Survey)private readonly surveyRepository: Repository<Survey>,
          private http: HttpService){}
 
     async fetchSurveyDatafromApi(surveyId: number): Promise<any>{
-        const questionReq = await firstValueFrom(this.http.get(environment.baseApiUrl + 'surveys/'+ surveyId, this.headers))
-        const answerReq = await firstValueFrom(this.http.post(environment.baseApiUrl + 'surveys/'+ surveyId + '/responses/', undefined , this.headers))
+        const questionReq = await firstValueFrom(this.http.get(environment.baseApiUrl + 'surveys/'+ surveyId))
+        const answerReq = await firstValueFrom(this.http.post(environment.baseApiUrl + 'surveys/'+ surveyId + '/responses/', undefined))
     
         return Promise.all([questionReq, answerReq]);
     }
 
     async fetchFoldersNested(): Promise<any>{
         const url = environment.baseApiUrl + 'folders/';
-        return await firstValueFrom(this.http.get(url, {params : {nested: true}, headers: this.headers.headers }).pipe(map(item => item.data)));
+        return await firstValueFrom(this.http.get(url, {params : {nested: true}}).pipe(map(item => item.data)));
     }
 
     getCharts(surveyId: number): Observable<any>{
         //TODO: move to http
-        return this.http.get(environment.baseApiUrl + 'surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/', this.headers).pipe(
+        return this.http.get(environment.baseApiUrl + 'surveys/'+ surveyId + '/charts/from/2000-10-10/to/2099-10-10/').pipe(
             map(chartRes => {
                 let tempItem = {...chartRes.data};
                 let dataArray = [];
@@ -43,7 +41,7 @@ export class SurveyService {
     }
 
     getSurveyInfo(surveyId: number): Observable<any>{
-        return this.http.get<Survey>(environment.baseApiUrl + 'surveys/'+ surveyId, this.headers).pipe(
+        return this.http.get<Survey>(environment.baseApiUrl + 'surveys/'+ surveyId).pipe(
             map(item => item.data)
             );  
     }
