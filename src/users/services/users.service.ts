@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AccessTokenModel } from 'src/auth/models/access-token.model';
 
 import { Repository } from 'typeorm';
 
@@ -9,10 +10,20 @@ import { UsersHttpService } from './users-http.service';
 @Injectable()
 export class UsersService {
 
+  currentUser: AccessTokenModel;
+
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
     private usersHttpService: UsersHttpService
     ) {}
+
+  setCurrentUser(user: AccessTokenModel){
+    this.currentUser = user;
+  }
+
+  get getCurrentUser(): AccessTokenModel{
+    return this.currentUser;
+  }
 
   create(username: string, email: string, password: string) {
       const user = this.repo.create({ username, email, password });
