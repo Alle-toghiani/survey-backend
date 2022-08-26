@@ -13,6 +13,19 @@ export class SurveyController {
         private surveyHttpService: SurveysHttpService
         ){};
 
+    @Public()
+    @Get('/r/:reportId')
+        async getReports(@Param('reportId') reportId) {
+            try{
+                
+                const response = await this.surveyHttpService.getReportData(reportId);
+                return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
+            }
+            catch(error) {
+                return new ResponseError("SURVEY.GET.ERROR", error)
+            }
+        }    
+
     @Get('/folders')
         async getFoldersNested() {
             try{
@@ -67,18 +80,5 @@ export class SurveyController {
     @Post('/get-charts/:sid')
         getCharts(@Param('sid') id){
             return this.surveyService.getCharts(id);
-        }
-
-    @Public()
-    @Get('/r/:reportId')
-        async getReports(@Param('reportId') reportId) {
-            try{
-                
-                const response = await this.surveyHttpService.getReportData(reportId);
-                return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
-            }
-            catch(error) {
-                return new ResponseError("SURVEY.GET.ERROR", error)
-            }
         }
 }
