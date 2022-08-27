@@ -59,7 +59,17 @@ export class SurveyController {
             catch(error) {
                 return new ResponseError("CHART-CONFIG.UPDATE.ERROR", error)
             }
-        }    
+        }
+    @Get('/:sid/preview')
+        async getAllQuestions(@Param('sid') sid: string){
+            try{
+                var response =  await this.surveyHttpService.getQuestionsList(sid);
+                return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
+            }
+            catch(error) {
+                return new ResponseError("SURVEY.GET.ERROR", error)
+            }
+        }
 
     @Get('/:sid')
         async getSurveyData(@Param('sid') sid: number){
