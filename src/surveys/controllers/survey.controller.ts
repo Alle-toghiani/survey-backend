@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, Request } from '@nestjs/common';
 import { SurveyService } from '../services/survey.service';
 import { CreateSurvey } from '../dtos/survey.dto';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
@@ -81,10 +81,16 @@ export class SurveyController {
             }
         }
 
-    @Post('/initialize/:sid')
-        initializeSurvey(@Param('sid') id){
-            return this.surveyService.initializeSurvey(id);
+    @Post('/initialize')
+    async initializeSurvey(@Request() req: any, @Body() body: {folder: number, name: string}) {
+        try{
+        const response = await this.surveyService.initizliseSurvey(body, req.user.username);
+        return new ResponseSuccess("MOD.INITIALIZE.SUCCESS", response);
         }
+        catch(error) {
+            return new ResponseError("MOD.INITIALIZE.ERROR", error)
+        }
+    }
 
     @Post('/get-charts/:sid')
         getCharts(@Param('sid') id){
