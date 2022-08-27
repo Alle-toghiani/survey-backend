@@ -12,7 +12,7 @@ export class SurveysHttpService {
 
     async getReportData(reportId: string){
         return new Promise(
-          resolve => {
+          (resolve, reject) => {
             const url = environment.baseApiUrl + 'surveys/' + reportId + '/general-reports/';
             this.http.get(url).subscribe(
               {
@@ -20,8 +20,11 @@ export class SurveysHttpService {
                     if (reportsRes.status === HttpStatus.OK){
                         resolve(reportsRes.data);
                     }
+                    else reject(reportsRes.statusText)
                 },
-                error: (error) => resolve(error)
+                error: (error) => {
+                  reject(error)
+                }
               }
             )
           }
