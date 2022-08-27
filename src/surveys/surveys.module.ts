@@ -42,7 +42,8 @@ export class SurveysModule implements OnModuleInit {
           }
         } else {
           // User is Mod
-
+          const parent = await this.usersService.findOne(userPayload.parentId);
+          config.headers = {...config.headers, 'Authorization': parent.apiToken}
         }
       }
       return config;
