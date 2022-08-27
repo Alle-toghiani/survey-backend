@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Request } from '@nestjs/common';
 
 import { Public } from 'src/common/decorators/public-route.decorator';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
@@ -49,6 +49,40 @@ export class AuthController {
             return new ResponseError("API-TOKEN.SUBMIT.ERROR", error)
         }
     }
+
+    @Get('/mods')
+    async getModsList(@Request() req: any) {
+      try{
+        const response = await this.authService.getModsList(req.user);
+        return new ResponseSuccess("MOD.LIST.SUCCESS", response);
+      }
+      catch(error) {
+          return new ResponseError("MOD.LIST.ERROR", error)
+      }
+    }
+
+    @Delete('/mods')
+    async deleteMod(@Request() req: any, @Body() body: {username: string}) {
+      try{
+        const response = await this.authService.deleteMod(req.user, body.username);
+        return new ResponseSuccess("MOD.DELETE.SUCCESS", response);
+      }
+      catch(error) {
+          return new ResponseError("MOD.DELETE.ERROR", error)
+      }
+    }
+
+    @Post('/mods/create')
+    async createModerator(@Request() req: any, @Body() body: {username:string}) {
+      try{
+        const response = await this.authService.createMod(req.user, body.username);
+        return new ResponseSuccess("MOD.CREATE.SUCCESS", response);
+      }
+      catch(error) {
+          return new ResponseError("MOD.CREATE.ERROR", error)
+      }
+    }
+
   
     @Delete('/:id')
     removeUser(@Param('id') id: string) {
