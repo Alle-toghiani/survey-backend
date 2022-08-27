@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AccessTokenModel } from 'src/auth/models/access-token.model';
 
 import { Repository } from 'typeorm';
+import { CreateModDto } from '../dtos/create-mod.dto';
 
 import { User } from '../entities/user.entity';
 import { UsersHttpService } from './users-http.service';
@@ -25,6 +26,15 @@ export class UsersService {
     return this.currentUser;
   }
 
+  createMod(mod: CreateModDto){
+      const user = this.repo.create(mod);
+      return this.repo.save(user);
+  }
+
+  getModsList(username: string){
+    return this.repo.find({ select: ['username', 'surveys'], where:{ parentId: username}})
+  }
+
   create(username: string, email: string, password: string) {
       const user = this.repo.create({ username, email, password });
       return this.repo.save(user);
@@ -45,10 +55,16 @@ export class UsersService {
 
   async update(username: string, attrs: Partial<User>) {
     const user = await this.findOne(username);
+    const userSurveys = user.surveys;
+
     if (!user) {
       throw new NotFoundException('user not found');
     }
+
     Object.assign(user, attrs);
+    if (attrs.surveys){
+      Object.assign(user, {...user, surveys: [...userSurveys, ...attrs.surveys]})
+    }
     return this.repo.save(user);
   }
 
