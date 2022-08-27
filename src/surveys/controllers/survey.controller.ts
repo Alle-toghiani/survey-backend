@@ -40,9 +40,8 @@ export class SurveyController {
     @Get('/:sid/details/:qid')
         async getSurveyQuestionDetails(@Param('sid') sid: string, @Param('qid') qid: string){
             try{
-                var response =  await this.surveyService.findSurveyQuestion(sid, qid);
+                var response =  await this.surveyHttpService.getQuestion(sid, qid);
                 return new ResponseSuccess("SURVEY.QUESTION.GET.SUCCESS", response);
-                
             }
             catch(error) {
                 return new ResponseError("SURVEY.QUESTION.GET.ERROR", error)
