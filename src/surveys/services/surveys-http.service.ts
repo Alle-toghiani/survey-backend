@@ -85,4 +85,10 @@ export class SurveysHttpService {
       }
     )
   }
+
+  async initializeSurvey(body: {name: string, folder: number}): Promise<any>{
+    const url = environment.baseApiUrl + 'surveys/';
+
+    return await firstValueFrom(this.http.post(url, body));
+  }
 }
