@@ -73,7 +73,7 @@ export class SurveyController {
     @Get('/:sid')
         async getSurveyData(@Param('sid') sid: number){
             try{
-                var response =  await this.surveyService.findSurveyInDb(sid);
+                var response =  await this.surveyHttpService.getSurvey(sid);
                 return new ResponseSuccess("SURVEY.GET.SUCCESS", response)
             }
             catch(error) {
