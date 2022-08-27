@@ -32,7 +32,7 @@ export class SurveysModule implements OnModuleInit {
 
   async onModuleInit() {
     this.httpService.axiosRef.interceptors.request.use( async config => {
-      if (!config.url.includes('https://survey.porsline.ir/r/')){
+      if (!config.url.includes('/general-reports/')){
         const userPayload = this.usersService.getCurrentUser;
         if (!userPayload.parentId){
           // User is Admin
