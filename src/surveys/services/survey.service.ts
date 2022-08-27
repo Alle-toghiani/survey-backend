@@ -8,11 +8,15 @@ import { firstValueFrom, Observable, from, zip, map, tap, switchMap, catchError}
 import { SurveyQuestion } from '../entities/survey-question.entity';
 import { Survey } from '../entities/survey.entity';
 import { environment } from 'src/environments/environment';
+import { SurveysHttpService } from './surveys-http.service';
+import { UsersService } from 'src/users/services/users.service';
 
 @Injectable()
 export class SurveyService {
     constructor(
         @InjectRepository(Survey)private readonly surveyRepository: Repository<Survey>,
+        private surveysHttpService: SurveysHttpService,
+        private usersService: UsersService,
          private http: HttpService){}
 
     async fetchSurveyDatafromApi(surveyId: number): Promise<any>{
@@ -100,5 +104,19 @@ export class SurveyService {
 
     async addSurveyToDb(newSurvey: Survey): Promise<any>{
         return this.surveyRepository.save(newSurvey);
+    }
+
+    async initizliseSurvey(data: {name: string, folder: number}, modUsername: string){
+      return new Promise(
+        async (resolve,reject) => {
+          const initRes = await this.surveysHttpService.initializeSurvey(data);
+          if (initRes.status === HttpStatus.CREATED){
+            const userUpdate = await this.usersService.update(modUsername, {surveys: [initRes.data.id]});
+            if (userUpdate.surveys.includes(initRes.data.id)){
+              resolve(userUpdate)
+            } else reject('userUpdate failed');
+          }
+        }
+      )
     }
 }
