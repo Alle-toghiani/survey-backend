@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   createMod(mod: CreateModDto){
-      const user = this.repo.create(mod);
+      const user = this.repo.create({...mod, surveys: []});
       return this.repo.save(user);
   }
 
