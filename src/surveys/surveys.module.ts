@@ -34,7 +34,7 @@ export class SurveysModule implements OnModuleInit {
     this.httpService.axiosRef.interceptors.request.use( async config => {
       if (!config.url.includes('/general-reports/')){
         const userPayload = this.usersService.getCurrentUser;
-        if (!userPayload.parentId){
+        if (userPayload.role === 'ADMIN'){
           // User is Admin
           const user = await this.usersService.findOne(userPayload.username);
           if (user.apiToken){
