@@ -4,6 +4,7 @@ import { CreateSurvey } from '../dtos/survey.dto';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
 import { Public } from 'src/common/decorators/public-route.decorator';
 import { SurveysHttpService } from '../services/surveys-http.service';
+import { map } from 'rxjs';
 
 @Controller('survey')
 export class SurveyController {
@@ -27,9 +28,10 @@ export class SurveyController {
         }    
 
     @Get('/folders')
-        async getFoldersNested() {
+        async getFoldersNested(@Request() req: any) {
             try{
-                const response = await this.surveyHttpService.getFolders();
+
+                const response = await this.surveyHttpService.getFolders(req.user)
                 return new ResponseSuccess("FOLDERS.FETCH.SUCCESS", response);
             }
             catch(error) {
