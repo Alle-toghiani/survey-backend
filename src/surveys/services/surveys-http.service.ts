@@ -4,10 +4,13 @@ import { firstValueFrom, map, Observable } from 'rxjs';
 import { FolderModel } from '../models/folder.model';
 import { environment } from 'src/environments/environment';
 import { Survey } from '../entities/survey.entity';
+import { AccessTokenModel } from 'src/auth/models/access-token.model';
+import { UsersService } from 'src/users/services/users.service';
 @Injectable()
 export class SurveysHttpService {
     constructor(
-        private http: HttpService
+        private http: HttpService,
+        private usersService: UsersService
     ){}
 
     async getReportData(reportId: string){
@@ -32,10 +35,24 @@ export class SurveysHttpService {
       }
 
   // get List of Surveys
-  async getFolders(): Promise<any>{
+  async getFolders(user: AccessTokenModel): Promise<any>{
     const url = environment.baseApiUrl + 'folders/';
 
-    return await firstValueFrom(this.http.get(url, {params : {nested: true}}).pipe(map(item => item.data)));
+    if (user.role === 'MOD') {
+      return await firstValueFrom(this.http.get(url, {params : {nested: true}}).pipe(
+        map(
+            async item => {
+              const dataArray = item.data;
+              const dbUser = await this.usersService.findOne(user.username);
+              const newDataArray = dataArray.map( folder => ({...folder, surveys: folder.surveys.filter( survey => dbUser.surveys.includes(survey.id))}))
+              return newDataArray;
+            }
+          )
+        )
+      );
+    } else {
+      return await firstValueFrom(this.http.get(url, {params : {nested: true}}).pipe(map(item => item.data)));
+    }
   }
 
   // get List of Questions
