@@ -83,6 +83,9 @@ import { CreateModDto } from 'src/users/dtos/create-mod.dto';
         role: user.parentId ? 'MOD' : 'ADMIN',
         hasToken: !!(!user.parentId && user.apiToken)
         };
+        if (user.parentId){
+          payload.parentId = user.parentId;
+        }
 
       return {
         access_token: this.jwtService.sign(payload),
