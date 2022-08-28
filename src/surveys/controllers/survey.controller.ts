@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Request } from '@nestjs/common';
 import { SurveyService } from '../services/survey.service';
 import { CreateSurvey } from '../dtos/survey.dto';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
@@ -69,6 +69,28 @@ export class SurveyController {
                 return new ResponseError("SURVEY.GET.ERROR", error)
             }
         }
+
+    @Post('/:sid/:path')
+    async postQuestion(@Param('sid') sid: string, @Param('path') path: string, @Body() body: any){
+        try{
+            var response =  await this.surveyHttpService.postQuestion(sid, body, path);
+            return new ResponseSuccess("SURVEY.POST_QUESTION.SUCCESS", response)
+        }
+        catch(error) {
+            return new ResponseError("SURVEY.POST_QUESTION.ERROR", error)
+        }
+    }
+    
+    @Delete('/:sid/:qid')
+    async deleteQuestion(@Param('sid') sid: string, @Param('qid') qid: string){
+        try{
+            var response =  await this.surveyHttpService.deleteQuestion(sid, qid);
+            return new ResponseSuccess("SURVEY.POST_QUESTION.SUCCESS", response)
+        }
+        catch(error) {
+            return new ResponseError("SURVEY.POST_QUESTION.ERROR", error)
+        }
+    }    
 
     @Get('/:sid')
         async getSurveyData(@Param('sid') sid: number){
