@@ -91,4 +91,16 @@ export class SurveysHttpService {
 
     return await firstValueFrom(this.http.post(url, body));
   }
+
+  async postQuestion(sid: string, data: any, path: string): Promise<any>{
+    const url = environment.baseApiUrl + 'surveys/' + sid + '/questions/' + path + '/';
+    const res = await firstValueFrom(this.http.post(url, data));
+    return res.status;
+  }
+
+  async deleteQuestion(sid: string, qid: string): Promise<any>{
+    const url = environment.baseApiUrl + 'surveys/' + sid + '/questions/' + qid + '/';
+    const res = await firstValueFrom(this.http.delete(url));
+    return res.status;
+  }
 }
